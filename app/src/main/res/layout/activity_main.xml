@@ -27,6 +27,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="send"
+        android:text="发送消息(项目只存在一个WebSocket)" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="sendOne"
         android:text="发送消息1" />
 

@@ -35,7 +35,8 @@ public class RxWebSocket implements WebSocketApi {
 
     private WebSocketApi webSocketApi;
 
-    private RxWebSocket() {}
+    private RxWebSocket() {
+    }
 
     public static RxWebSocket instance;
 
@@ -73,17 +74,27 @@ public class RxWebSocket implements WebSocketApi {
 
     @Override
     public Observable<WebSocketInfo> get(String url, long timeout, TimeUnit timeUnit) {
-        return webSocketApi.get(url,timeout,timeUnit);
+        return webSocketApi.get(url, timeout, timeUnit);
     }
 
     @Override
-    public Observable<Boolean> send(String url, String msg) {
-        return webSocketApi.send(url, msg);
+    public Observable<Boolean> sendRx(String msg) {
+        return webSocketApi.sendRx(msg);
     }
 
     @Override
-    public Observable<Boolean> send(String url, ByteString byteString) {
-        return webSocketApi.send(url, byteString);
+    public Observable<Boolean> sendRx(String url, String msg) {
+        return webSocketApi.sendRx(url, msg);
+    }
+
+    @Override
+    public Observable<Boolean> sendRx(String url, ByteString byteString) {
+        return webSocketApi.sendRx(url, byteString);
+    }
+
+    @Override
+    public Observable<Boolean> sendRx(ByteString byteString) {
+        return webSocketApi.sendRx(byteString);
     }
 
     @Override
@@ -97,8 +108,8 @@ public class RxWebSocket implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> close(String url) {
-        return webSocketApi.close(url);
+    public Observable<Boolean> closeRx(String url) {
+        return webSocketApi.closeRx(url);
     }
 
     @Override
@@ -107,8 +118,8 @@ public class RxWebSocket implements WebSocketApi {
     }
 
     @Override
-    public Observable<List<Boolean>> closeAll() {
-        return webSocketApi.closeAll();
+    public Observable<List<Boolean>> closeAllRx() {
+        return webSocketApi.closeAllRx();
     }
 
     @Override

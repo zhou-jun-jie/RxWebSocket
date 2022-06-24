@@ -8,9 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.List;
-
-import io.reactivex.functions.Consumer;
 import okhttp3.WebSocket;
 import okio.ByteString;
 
@@ -74,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     public void sendOne(View view) {
-        WebSocketManager.getInstance().getRxWebSocket().send(url, "测试发送消息1")
+        WebSocketManager.getInstance().getRxWebSocket().sendRx(url, "测试发送消息1")
                 .subscribe(aBoolean -> Log.e(TAG, "发送消息成功:" + aBoolean));
     }
 
     @SuppressLint("CheckResult")
     public void close(View view) {
-        WebSocketManager.getInstance().getRxWebSocket().close(url)
+        WebSocketManager.getInstance().getRxWebSocket().closeRx(url)
                 .subscribe(aBoolean -> Log.e(TAG, "关闭连接1:" + aBoolean));
     }
 
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     public void closeAll(View view) {
-        WebSocketManager.getInstance().getRxWebSocket().closeAll()
+        WebSocketManager.getInstance().getRxWebSocket().closeAllRx()
                 .subscribe(booleans -> Log.e(TAG, "关闭All:" + booleans.size()));
     }
 
@@ -139,18 +136,25 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     public void sendTwo(View view) {
-        WebSocketManager.getInstance().getRxWebSocket().send(url2,"测试消息2")
+        WebSocketManager.getInstance().getRxWebSocket().sendRx(url2,"测试消息2")
         .subscribe(aBoolean -> Log.e(TAG2,"发送消息:"+aBoolean));
     }
 
     @SuppressLint("CheckResult")
     public void close2(View view) {
-        WebSocketManager.getInstance().getRxWebSocket().close(url2)
+        WebSocketManager.getInstance().getRxWebSocket().closeRx(url2)
                 .subscribe(aBoolean -> Log.e(TAG2, "关闭连接2:" + aBoolean));
     }
 
     public void closeNow2(View view) {
         WebSocketManager.getInstance().getRxWebSocket().closeNow(url2);
         Log.e(TAG2, "关闭连接2 closeNow");
+    }
+
+    @SuppressLint("CheckResult")
+    public void send(View view) {
+        WebSocketManager.getInstance().getRxWebSocket().sendRx("测试发送消息__Hello")
+                .subscribe(aBoolean -> Log.e(TAG,"发送消息__唯一:"+aBoolean))
+        ;
     }
 }

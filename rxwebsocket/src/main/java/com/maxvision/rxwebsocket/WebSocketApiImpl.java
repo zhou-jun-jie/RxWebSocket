@@ -95,11 +95,41 @@ public class WebSocketApiImpl implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> send(String url, String msg) {
+    public Observable<Boolean> sendRx(String msg) {
+        return Observable.create(emitter -> {
+            if (mWebSocketMap.size() <= 0) {
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                emitter.onNext(false);
+            } else if (mWebSocketMap.size() > 1) {
+                if (isPrintLog) {
+                    Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (String url, String msg)[app存在多个WebSocket,请选择此sendMsg(String url,String msg)]");
+                }
+            } else {
+                Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
+                WebSocket webSocket = entry.getValue();
+                if (null == webSocket) {
+                    if (isPrintLog) {
+                        Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    }
+                    emitter.onNext(false);
+                } else {
+                    emitter.onNext(webSocket.send(msg));
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> sendRx(String url, String msg) {
         return Observable.create(emitter -> {
             WebSocket webSocket = mWebSocketMap.get(url);
             if (null == webSocket) {
-                emitter.onError(new NullPointerException("The WebSocket is Null,please check"));
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                emitter.onNext(false);
             } else {
                 emitter.onNext(webSocket.send(msg));
             }
@@ -107,13 +137,43 @@ public class WebSocketApiImpl implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> send(String url, ByteString byteString) {
+    public Observable<Boolean> sendRx(String url, ByteString byteString) {
         return Observable.create(emitter -> {
             WebSocket webSocket = mWebSocketMap.get(url);
             if (null == webSocket) {
-                emitter.onError(new NullPointerException("The WebSocket is Null,please check"));
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                emitter.onNext(false);
             } else {
                 emitter.onNext(webSocket.send(byteString));
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> sendRx(ByteString byteString) {
+        return Observable.create(emitter -> {
+            if (mWebSocketMap.size() <= 0) {
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                emitter.onNext(false);
+            } else if (mWebSocketMap.size() > 1) {
+                if (isPrintLog) {
+                    Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+                }
+            } else {
+                Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
+                WebSocket webSocket = entry.getValue();
+                if (null == webSocket) {
+                    if (isPrintLog) {
+                        Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    }
+                    emitter.onNext(false);
+                } else {
+                    emitter.onNext(webSocket.send(byteString));
+                }
             }
         });
     }
@@ -129,7 +189,7 @@ public class WebSocketApiImpl implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> close(String url) {
+    public Observable<Boolean> closeRx(String url) {
         WebSocket webSocket = mWebSocketMap.get(url);
         if (null == webSocket) {
             Disposable disposable = mDisposableMap.get(url);
@@ -141,7 +201,7 @@ public class WebSocketApiImpl implements WebSocketApi {
             return Observable.create(emitter -> emitter.onNext(true));
         } else {
             return Observable.create((ObservableOnSubscribe<WebSocket>)
-                    emitter -> emitter.onNext(webSocket))
+                            emitter -> emitter.onNext(webSocket))
                     .map(this::closeWebSocket);
         }
     }
@@ -163,15 +223,15 @@ public class WebSocketApiImpl implements WebSocketApi {
     }
 
     @Override
-    public Observable<List<Boolean>> closeAll() {
+    public Observable<List<Boolean>> closeAllRx() {
         Observable<List<Boolean>> disObservable = Observable.just(mDisposableMap)
-                    .map(Map::values)
-                    .concatMap((Function<Collection<Disposable>, ObservableSource<Disposable>>) disposables -> Observable.fromIterable(disposables))
-                    .map(disposable -> {
-                        disposable.dispose();
-                        return true;
-                    }).collect((Callable<List<Boolean>>) ArrayList::new, List::add)
-                    .toObservable();
+                .map(Map::values)
+                .concatMap((Function<Collection<Disposable>, ObservableSource<Disposable>>) disposables -> Observable.fromIterable(disposables))
+                .map(disposable -> {
+                    disposable.dispose();
+                    return true;
+                }).collect((Callable<List<Boolean>>) ArrayList::new, List::add)
+                .toObservable();
         Observable<List<Boolean>> webObservable = Observable.just(mWebSocketMap)
                 .map(Map::values)
                 .concatMap((Function<Collection<WebSocket>, ObservableSource<WebSocket>>)
@@ -230,7 +290,7 @@ public class WebSocketApiImpl implements WebSocketApi {
                         if (isPrintLog) {
                             Log.e(logTag, "doOnSubscribe");
                         }
-                        mDisposableMap.put(url,disposable);
+                        mDisposableMap.put(url, disposable);
                     })
                     .doOnNext(webSocketInfo -> {
                         if (webSocketInfo.isConnect()) {
@@ -267,7 +327,6 @@ public class WebSocketApiImpl implements WebSocketApi {
         @Override
         public void subscribe(ObservableEmitter<WebSocketInfo> emitter) {
             initWebSocket(emitter);
-            Log.e(logTag, "是否为空:" + (mWebSocket == null)+",thread:"+Thread.currentThread().getName());
             if (mWebSocket != null) {
                 //降低重连频率
                 if (Thread.currentThread() != Looper.getMainLooper().getThread()) {
@@ -396,7 +455,6 @@ public class WebSocketApiImpl implements WebSocketApi {
             }
         }
     }
-
 
 
 }

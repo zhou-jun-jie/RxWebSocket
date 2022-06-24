@@ -20,10 +20,16 @@ public interface WebSocketApi {
     Observable<WebSocketInfo> get(String url, long timeout, TimeUnit timeUnit);
 
     // 同步发送消息String
-    Observable<Boolean> send(String url,String msg);
+    Observable<Boolean> sendRx(String msg);
+
+    // 同步发送消息String
+    Observable<Boolean> sendRx(String url, String msg);
 
     // 同步发送消息ByteString
-    Observable<Boolean> send(String url, ByteString byteString);
+    Observable<Boolean> sendRx(String url, ByteString byteString);
+
+    // 同步发送消息ByteString
+    Observable<Boolean> sendRx(ByteString byteString);
 
     // 异步发送消息String
     Observable<Boolean> asyncSend(String url,String msg);
@@ -32,12 +38,12 @@ public interface WebSocketApi {
     Observable<Boolean> asyncSend(String url,ByteString byteString);
 
     // 关闭指定url的连接
-    Observable<Boolean> close(String url);
+    Observable<Boolean> closeRx(String url);
 
     boolean closeNow(String url);
 
     // 关闭当前所有连接
-    Observable<List<Boolean>> closeAll();
+    Observable<List<Boolean>> closeAllRx();
 
     void closeAllNow();
 
