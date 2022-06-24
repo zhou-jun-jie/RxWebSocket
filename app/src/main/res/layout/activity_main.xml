@@ -21,21 +21,44 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="connectTwo"
+        android:text="连接2" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="sendOne"
         android:text="发送消息1" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="sendTwo"
+        android:text="发送消息2" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="close"
-        android:text="关闭Close" />
+        android:text="关闭Close1" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="close2"
+        android:text="关闭Close2" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="closeNow"
-        android:text="关闭CloseNow" />
+        android:text="关闭CloseNow1" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="closeNow2"
+        android:text="关闭CloseNow2" />
 
     <Button
         android:layout_width="match_parent"

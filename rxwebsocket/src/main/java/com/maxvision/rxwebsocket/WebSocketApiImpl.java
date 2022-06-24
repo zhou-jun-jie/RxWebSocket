@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.LockSupport;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
@@ -24,8 +25,10 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
@@ -129,7 +132,6 @@ public class WebSocketApiImpl implements WebSocketApi {
     public Observable<Boolean> close(String url) {
         WebSocket webSocket = mWebSocketMap.get(url);
         if (null == webSocket) {
-            // TODO
             Disposable disposable = mDisposableMap.get(url);
             if (null != disposable) {
                 disposable.dispose();
@@ -146,7 +148,6 @@ public class WebSocketApiImpl implements WebSocketApi {
 
     @Override
     public boolean closeNow(String url) {
-        // TODO 判断
         WebSocket webSocket = mWebSocketMap.get(url);
         if (null == webSocket) {
             Disposable disposable = mDisposableMap.get(url);
@@ -163,8 +164,7 @@ public class WebSocketApiImpl implements WebSocketApi {
 
     @Override
     public Observable<List<Boolean>> closeAll() {
-        if (mWebSocketMap.size() == 0) {
-            return Observable.just(mDisposableMap)
+        Observable<List<Boolean>> disObservable = Observable.just(mDisposableMap)
                     .map(Map::values)
                     .concatMap((Function<Collection<Disposable>, ObservableSource<Disposable>>) disposables -> Observable.fromIterable(disposables))
                     .map(disposable -> {
@@ -172,14 +172,17 @@ public class WebSocketApiImpl implements WebSocketApi {
                         return true;
                     }).collect((Callable<List<Boolean>>) ArrayList::new, List::add)
                     .toObservable();
-        } else {
-            return Observable.just(mWebSocketMap)
-                    .map(Map::values)
-                    .concatMap((Function<Collection<WebSocket>, ObservableSource<WebSocket>>)
-                            Observable::fromIterable)
-                    .map(this::closeWebSocket)
-                    .collect((Callable<List<Boolean>>) ArrayList::new, List::add).toObservable();
-        }
+        Observable<List<Boolean>> webObservable = Observable.just(mWebSocketMap)
+                .map(Map::values)
+                .concatMap((Function<Collection<WebSocket>, ObservableSource<WebSocket>>)
+                        Observable::fromIterable)
+                .map(this::closeWebSocket)
+                .collect((Callable<List<Boolean>>) ArrayList::new, List::add).toObservable();
+        return Observable.zip(disObservable, webObservable, (booleans, booleans2) -> {
+            List<Boolean> list = new ArrayList<>(booleans);
+            list.addAll(booleans2);
+            return list;
+        });
     }
 
     @Override
