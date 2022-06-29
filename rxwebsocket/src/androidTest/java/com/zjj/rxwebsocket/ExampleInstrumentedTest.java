@@ -1,4 +1,4 @@
-package com.maxvision.rxwebsocket;
+package com.zjj.rxwebsocket;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.maxvision.rxwebsocket.test", appContext.getPackageName());
+        assertEquals("com.zjj.rxwebsocket.test", appContext.getPackageName());
     }
 }

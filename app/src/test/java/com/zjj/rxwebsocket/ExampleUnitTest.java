@@ -1,4 +1,4 @@
-package com.maxvision.rxwebsocket;
+package com.zjj.rxwebsocket;
 
 import org.junit.Test;
 
