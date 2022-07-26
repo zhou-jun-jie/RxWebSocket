@@ -17,9 +17,14 @@ import okio.ByteString;
  */
 public class RxWebSocket implements WebSocketApi {
 
-    // 是否打印log
+    /**
+     * 是否打印log
+     */
     boolean isPrintLog;
 
+    /**
+     * log的标识tag
+     */
     String logTag;
 
     OkHttpClient mClient;
@@ -27,10 +32,14 @@ public class RxWebSocket implements WebSocketApi {
     SSLSocketFactory mSslSocketFactory;
     X509TrustManager mTrustManager;
 
-    // 重连间隔时间
+    /**
+     * 重连间隔时间
+     */
     long mReconnectInterval;
 
-    // 重连间隔时间的单位
+    /**
+     * 重连间隔时间的单位
+     */
     TimeUnit mReconnectIntervalTimeUnit;
 
     private WebSocketApi webSocketApi;
@@ -38,7 +47,7 @@ public class RxWebSocket implements WebSocketApi {
     private RxWebSocket() {
     }
 
-    public static RxWebSocket instance;
+    public static volatile RxWebSocket instance;
 
     public static RxWebSocket getInstance() {
         if (null == instance) {
@@ -98,13 +107,23 @@ public class RxWebSocket implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> asyncSend(String url, String msg) {
-        return null;
+    public boolean send(String msg) {
+        return webSocketApi.send(msg);
     }
 
     @Override
-    public Observable<Boolean> asyncSend(String url, ByteString byteString) {
-        return null;
+    public boolean send(ByteString byteString) {
+        return webSocketApi.send(byteString);
+    }
+
+    @Override
+    public boolean send(String url, String msg) {
+        return webSocketApi.send(url,msg);
+    }
+
+    @Override
+    public boolean send(String url, ByteString byteString) {
+        return webSocketApi.send(url,byteString);
     }
 
     @Override

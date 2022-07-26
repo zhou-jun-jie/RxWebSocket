@@ -14,9 +14,14 @@ import okhttp3.OkHttpClient;
  */
 public class RxWebSocketConfig {
 
-    // 是否打印log
+    /**
+     * 是否打印log
+     */
     boolean isPrintLog;
 
+    /**
+     * 默认日志的标识
+     */
     String logTag ="zjj_websocket";
 
     OkHttpClient mClient;
@@ -24,10 +29,14 @@ public class RxWebSocketConfig {
     SSLSocketFactory mSslSocketFactory;
     X509TrustManager mTrustManager;
 
-    // 重连间隔时间
+    /**
+     * 重连间隔时间
+     */
     long mReconnectInterval;
 
-    // 重连间隔时间的单位
+    /**
+     * 重连间隔时间的单位
+     */
     TimeUnit mReconnectIntervalTimeUnit;
 
     public RxWebSocketConfig() {

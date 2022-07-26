@@ -103,6 +103,7 @@ public class WebSocketApiImpl implements WebSocketApi {
                 if (isPrintLog) {
                     Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (String url, String msg)[app存在多个WebSocket,请选择此sendMsg(String url,String msg)]");
                 }
+                emitter.onNext(false);
             } else {
                 Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
                 WebSocket webSocket = entry.getValue();
@@ -160,6 +161,7 @@ public class WebSocketApiImpl implements WebSocketApi {
                 if (isPrintLog) {
                     Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
                 }
+                emitter.onNext(false);
             } else {
                 Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
                 WebSocket webSocket = entry.getValue();
@@ -176,14 +178,83 @@ public class WebSocketApiImpl implements WebSocketApi {
     }
 
     @Override
-    public Observable<Boolean> asyncSend(String url, String msg) {
-        return null;
+    public boolean send(String msg) {
+        if (mWebSocketMap.size() <= 0) {
+            if (isPrintLog) {
+                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+            }
+            return false;
+        } else if (mWebSocketMap.size() > 1) {
+            if (isPrintLog) {
+                Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+            }
+            return false;
+        } else {
+            Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
+            WebSocket webSocket = entry.getValue();
+            if (null == webSocket) {
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                return false;
+            } else {
+                return webSocket.send(msg);
+            }
+        }
     }
 
     @Override
-    public Observable<Boolean> asyncSend(String url, ByteString byteString) {
-        return null;
+    public boolean send(ByteString byteString) {
+        if (mWebSocketMap.size() <= 0) {
+            if (isPrintLog) {
+                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+            }
+            return false;
+        } else if (mWebSocketMap.size() > 1) {
+            if (isPrintLog) {
+                Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+            }
+            return false;
+        } else {
+            Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
+            WebSocket webSocket = entry.getValue();
+            if (null == webSocket) {
+                if (isPrintLog) {
+                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                }
+                return false;
+            } else {
+                return webSocket.send(byteString);
+            }
+        }
     }
+
+    @Override
+    public boolean send(String url, String msg) {
+        WebSocket webSocket = mWebSocketMap.get(url);
+        if (null == webSocket) {
+            if (isPrintLog) {
+                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+            }
+            return false;
+        } else {
+            return webSocket.send(msg);
+        }
+    }
+
+    @Override
+    public boolean send(String url, ByteString byteString) {
+        WebSocket webSocket = mWebSocketMap.get(url);
+        if (null == webSocket) {
+            if (isPrintLog) {
+                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+            }
+            return false;
+        } else {
+            return webSocket.send(byteString);
+        }
+    }
+
 
     @Override
     public Observable<Boolean> closeRx(String url) {
@@ -223,7 +294,7 @@ public class WebSocketApiImpl implements WebSocketApi {
     public Observable<List<Boolean>> closeAllRx() {
         Observable<List<Boolean>> disObservable = Observable.just(mDisposableMap)
                 .map(Map::values)
-                .concatMap((Function<Collection<Disposable>, ObservableSource<Disposable>>) disposables -> Observable.fromIterable(disposables))
+                .concatMap((Function<Collection<Disposable>, ObservableSource<Disposable>>) Observable::fromIterable)
                 .map(disposable -> {
                     disposable.dispose();
                     return true;

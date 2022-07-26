@@ -8,10 +8,13 @@ import okio.ByteString;
 /**
  * name：zjj
  * date：2022/6/20
- * desc：类备注
+ * desc：基类观察者
  */
 public class BaseWebSocketSubscriber implements Observer<WebSocketInfo> {
 
+    /**
+     * 连接成功的标识
+     */
     private boolean hasOpened;
 
     private Disposable disposable;
@@ -55,27 +58,39 @@ public class BaseWebSocketSubscriber implements Observer<WebSocketInfo> {
         }
     }
 
-    // 回调--连接成功
+    /**
+     * 外部回调--连接成功
+     */
     protected void onOpen(WebSocket webSocket) {
 
     }
 
-    // 回调--重连
+    /**
+     * 外部回调--重连
+     */
     protected void onReconnect() {
 
     }
 
-    // 回调--消息
+    /**
+     * 外部回调--消息
+     * @param string 回调的string
+     */
     protected void onMessage(String string) {
 
     }
 
-    // 回调--byteString
+    /**
+     * 外部回调--byteString
+     * @param byteString 回调的byteString
+     */
     protected void onMessage(ByteString byteString) {
 
     }
 
-    // 回调--关闭
+    /**
+     * 外部回调--关闭
+     */
     protected void onClose() {
 
     }
