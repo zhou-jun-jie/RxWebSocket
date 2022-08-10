@@ -7,7 +7,7 @@ ext {
     PUBLISH_VERSION = "1.0.2"  //发布版本号
     PUBLISH_GROUP_ID = 'io.github.zhou-jun-jie'  //你的sonatype的group_id
 }
-apply from: '../maven_push.gradle'
+/*apply from: '../maven_push.gradle'*/
 
 android {
     compileSdkVersion 32
