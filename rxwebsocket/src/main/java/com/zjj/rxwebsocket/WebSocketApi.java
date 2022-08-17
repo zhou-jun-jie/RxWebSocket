@@ -14,6 +14,17 @@ import okio.ByteString;
 public interface WebSocketApi {
 
     /**
+     * 是否连接
+     */
+    boolean isConnect();
+
+    /**
+     * 是否连接
+     * @param url 多个url的情况下需要传入url
+     */
+    boolean isConnect(String url);
+
+    /**
      * 获取连接,返回观察对象,默认为5秒
      */
     Observable<WebSocketInfo> get(String url);

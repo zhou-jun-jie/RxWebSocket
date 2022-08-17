@@ -66,6 +66,12 @@ public class WebSocketApiImpl implements WebSocketApi {
 
     private final Map<String, Disposable> mDisposableMap;
 
+    /*    */
+
+    /**
+     * 连接状态
+     *//*
+    private final Map<String,Boolean> mConnectMap;*/
     public WebSocketApiImpl(boolean isPrintLog, String logTag, OkHttpClient client, SSLSocketFactory sslSocketFactory,
                             X509TrustManager trustManager, long reconnectInterval,
                             TimeUnit reconnectIntervalTimeUnit) {
@@ -79,6 +85,26 @@ public class WebSocketApiImpl implements WebSocketApi {
         mObservableMap = new ConcurrentHashMap<>();
         mWebSocketMap = new ConcurrentHashMap<>();
         mDisposableMap = new ConcurrentHashMap<>();
+        /*mConnectMap = new ConcurrentHashMap<>();*/
+    }
+
+    @Override
+    public boolean isConnect() {
+        if (mWebSocketMap.size() <= 0) {
+            return false;
+        } else if (mWebSocketMap.size() > 1) {
+            return false;
+        } else {
+            Map.Entry<String, WebSocket> entry = mWebSocketMap.entrySet().iterator().next();
+            WebSocket webSocket = entry.getValue();
+            return null != webSocket;
+        }
+    }
+
+    @Override
+    public boolean isConnect(String url) {
+        WebSocket webSocket = mWebSocketMap.get(url);
+        return null != webSocket;
     }
 
     @Override
@@ -96,12 +122,12 @@ public class WebSocketApiImpl implements WebSocketApi {
         return Observable.create(emitter -> {
             if (mWebSocketMap.size() <= 0) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 emitter.onNext(false);
             } else if (mWebSocketMap.size() > 1) {
                 if (isPrintLog) {
-                    Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (String url, String msg)[app存在多个WebSocket,请选择此sendMsg(String url,String msg)]");
+                    Log.e(logTag, "There are multiple WebSockets in the app. Please select sendMsg (String url, String msg)[app存在多个WebSocket,请选择此sendMsg(String url,String msg)]");
                 }
                 emitter.onNext(false);
             } else {
@@ -109,7 +135,7 @@ public class WebSocketApiImpl implements WebSocketApi {
                 WebSocket webSocket = entry.getValue();
                 if (null == webSocket) {
                     if (isPrintLog) {
-                        Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                        Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                     }
                     emitter.onNext(false);
                 } else {
@@ -125,7 +151,7 @@ public class WebSocketApiImpl implements WebSocketApi {
             WebSocket webSocket = mWebSocketMap.get(url);
             if (null == webSocket) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 emitter.onNext(false);
             } else {
@@ -140,7 +166,7 @@ public class WebSocketApiImpl implements WebSocketApi {
             WebSocket webSocket = mWebSocketMap.get(url);
             if (null == webSocket) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 emitter.onNext(false);
             } else {
@@ -154,12 +180,12 @@ public class WebSocketApiImpl implements WebSocketApi {
         return Observable.create(emitter -> {
             if (mWebSocketMap.size() <= 0) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 emitter.onNext(false);
             } else if (mWebSocketMap.size() > 1) {
                 if (isPrintLog) {
-                    Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+                    Log.e(logTag, "There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
                 }
                 emitter.onNext(false);
             } else {
@@ -167,7 +193,7 @@ public class WebSocketApiImpl implements WebSocketApi {
                 WebSocket webSocket = entry.getValue();
                 if (null == webSocket) {
                     if (isPrintLog) {
-                        Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                        Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                     }
                     emitter.onNext(false);
                 } else {
@@ -181,12 +207,12 @@ public class WebSocketApiImpl implements WebSocketApi {
     public boolean send(String msg) {
         if (mWebSocketMap.size() <= 0) {
             if (isPrintLog) {
-                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
             }
             return false;
         } else if (mWebSocketMap.size() > 1) {
             if (isPrintLog) {
-                Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+                Log.e(logTag, "There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
             }
             return false;
         } else {
@@ -194,7 +220,7 @@ public class WebSocketApiImpl implements WebSocketApi {
             WebSocket webSocket = entry.getValue();
             if (null == webSocket) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 return false;
             } else {
@@ -207,12 +233,12 @@ public class WebSocketApiImpl implements WebSocketApi {
     public boolean send(ByteString byteString) {
         if (mWebSocketMap.size() <= 0) {
             if (isPrintLog) {
-                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
             }
             return false;
         } else if (mWebSocketMap.size() > 1) {
             if (isPrintLog) {
-                Log.e(logTag,"There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
+                Log.e(logTag, "There are multiple WebSockets in the app. Please select sendMsg (ByteString byteString, String msg)[app存在多个WebSocket,请选择此sendMsg(ByteString byteString,String msg)]");
             }
             return false;
         } else {
@@ -220,7 +246,7 @@ public class WebSocketApiImpl implements WebSocketApi {
             WebSocket webSocket = entry.getValue();
             if (null == webSocket) {
                 if (isPrintLog) {
-                    Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                    Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
                 }
                 return false;
             } else {
@@ -234,7 +260,7 @@ public class WebSocketApiImpl implements WebSocketApi {
         WebSocket webSocket = mWebSocketMap.get(url);
         if (null == webSocket) {
             if (isPrintLog) {
-                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
             }
             return false;
         } else {
@@ -247,7 +273,7 @@ public class WebSocketApiImpl implements WebSocketApi {
         WebSocket webSocket = mWebSocketMap.get(url);
         if (null == webSocket) {
             if (isPrintLog) {
-                Log.e(logTag,"The WebSocket is Null,please check[WebSocket为空,请检查]");
+                Log.e(logTag, "The WebSocket is Null,please check[WebSocket为空,请检查]");
             }
             return false;
         } else {

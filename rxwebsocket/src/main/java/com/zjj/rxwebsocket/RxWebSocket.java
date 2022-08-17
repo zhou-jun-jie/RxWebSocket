@@ -77,6 +77,16 @@ public class RxWebSocket implements WebSocketApi {
     }
 
     @Override
+    public boolean isConnect() {
+        return webSocketApi.isConnect();
+    }
+
+    @Override
+    public boolean isConnect(String url) {
+        return webSocketApi.isConnect(url);
+    }
+
+    @Override
     public Observable<WebSocketInfo> get(String url) {
         return webSocketApi.get(url);
     }
