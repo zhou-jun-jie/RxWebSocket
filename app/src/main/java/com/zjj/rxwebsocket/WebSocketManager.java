@@ -63,4 +63,8 @@ public class WebSocketManager {
                 .subscribe(webSocketSubscriber);
     }
 
+    public boolean isConnect() {
+        return rxWebSocket.isConnect();
+    }
+
 }
